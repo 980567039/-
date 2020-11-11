@@ -10,7 +10,7 @@ db = pymysql.connect("localhost","root","mysqltest","novel" )
 cursor = db.cursor()
 
 def getNovelInfo():
-  sql = "select id, novel_link from novel where intro='' limit 1000;"
+  sql = "select id, novel_link from novel where spider=0"
   cursor.execute(sql)
   result = cursor.fetchall()
   for novel in result:
@@ -23,8 +23,10 @@ def getNovelInfo():
     date = info[3].split('：')[1]
     data = html.xpath('//div[@class="intro_info"]')[0]
     intro = data.xpath('string(.)')
-    # print(intro)
-    updateNovel(status, date, intro, novel[0])
+    cover = html.xpath('//div[@class="block_img2"]/img/@src')
+    print(cover)
+    updateCover(cover[0], novel[0])
+    # updateNovel(status, date, intro, novel[0])
   try:
     # 提交到数据库执行
     db.commit()
@@ -40,6 +42,12 @@ def updateNovel(status, t, intro, id):
   print('id为%s的数据已更新' % id)
   sys.stdout.flush()
   # print(sql)
+
+def updateCover(cover, id):
+  sql = ''' UPDATE `novel` SET `cover`=\'%s\' WHERE (`id`=\'%s\') ''' % (cover, id)
+  cursor.execute(sql)
+  print('id为%s的封面图已更新' % id)
+  sys.stdout.flush()
 
 if __name__ == "__main__":
   getNovelInfo()
