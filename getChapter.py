@@ -28,7 +28,7 @@ headers = {
 
 # 获取总页数
 def getPages():
-  sql = "select id, novel_link from novel where(spider='0' and type='游戏小说') limit 10;"
+  sql = "select id, novel_link from novel where(spider='0' and type='历史小说') limit 10;"
   cursor.execute(sql)
   result = cursor.fetchall()
   for novel in result:
